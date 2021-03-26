@@ -1,0 +1,75 @@
+// Color variables (appears count calculates by raw css)
+@color-white: #ffffff;
+
+body {
+	.custom-discount-row.custom-discount-result {
+		td {
+			background-color: #27ae60;
+			color: @color-white;
+			font-weight: 800;
+		}
+	}
+	.custom-discount-row {
+		td {
+			a {
+				color: @color-white;
+				text-decoration: none;
+			}
+			.custom-discount-action {
+				&:before {
+					-webkit-font-smoothing: antialiased;
+					font-family: 'Admin Icons';
+					font-style: normal;
+					font-weight: normal;
+					line-height: 1;
+					speak: none;
+				}
+				span {
+					border: 0;
+					clip: rect(0, 0, 0, 0);
+					height: 1px;
+					margin: -1px;
+					overflow: hidden;
+					padding: 0;
+					position: absolute;
+					width: 1px;
+				}
+			}
+			.custom-discount-action.custom-discount-apply {
+				background-color: transparent;
+				border: none;
+				&:before {
+					content: '\e625';
+				}
+			}
+			.custom-discount-action.custom-discount-edit-action {
+				&:before {
+					content: '\e631';
+				}
+			}
+        }
+        &.custom-discount-form {
+            .admin__field-control {
+                input[name="custom_discount_amount"] {
+                    max-width: 60px;
+                }
+            }
+        }
+	}
+}
+body.custom-discount-done {
+	.custom-discount-result {
+		display: table-row;
+	}
+	.custom-discount-form {
+		display: none;
+	}
+}
+body.custom-discount-edit {
+	.custom-discount-result {
+		display: none;
+	}
+	.custom-discount-form {
+		display: table-row;
+	}
+}

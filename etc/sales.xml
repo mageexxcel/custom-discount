@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Sales:etc/sales.xsd">
+    <section name="quote">
+        <group name="totals">
+            <item name="custom_order_discount" instance="Excellence\CustomOrderDiscount\Model\Total\Quote\Custom" sort_order="400">
+                <renderer name="adminhtml" instance="Excellence\CustomOrderDiscount\Block\Adminhtml\Order\Create\Totals\Custom"/>
+            </item>
+        </group>
+    </section>
+    <section name="order_invoice">
+        <group name="totals">
+            <item name="Discount" instance="Excellence\CustomOrderDiscount\Model\Total\Invoice\Discount" sort_order="400"/>
+        </group>
+    </section>
+    <section name="order_creditmemo">
+        <group name="totals">
+            <item name="Discount" instance="Excellence\CustomOrderDiscount\Model\Total\Creditmemo\Discount" sort_order="400"/>
+        </group>
+    </section>
+</config>

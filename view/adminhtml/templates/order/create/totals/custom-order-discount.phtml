@@ -1,0 +1,107 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+$helper = $this->helper('Excellence\CustomOrderDiscount\Helper\Data');
+$currencyCode = $helper->getCurrencySymbol($block->getStore());
+$discountData = $helper->getCustomDiscountData();
+$customDiscountAmount = __('00.00');
+$customDiscountType = 'fixed';
+if (!empty($discountData)) {
+    if (array_key_exists('discount_value', $discountData) && !empty($discountData['discount_value'])) {
+        $customDiscountAmount = $discountData['discount_value'];
+    }
+    if (array_key_exists('type', $discountData) && !empty($discountData['type'])) {
+        $customDiscountType = $discountData['type'];
+    }
+}
+?>
+<tr class="row-totals custom-discount-row form custom-discount-form">
+    <td style="<?= /* @escapeNotVerified */ $block->getStyle() ?>" class="admin__total-mark" colspan="<?= /* @escapeNotVerified */ $block->getColspan() ?>">
+        <?= /* @escapeNotVerified */ $block->getTotal()->getTitle() ?>
+    </td>
+    <td style="<?= /* @escapeNotVerified */ $block->getStyle() ?>" class="admin__total-amount">
+        <div class="form custom-discount-amount">
+            <div class="admin__field-control">
+                <select 
+                    class="select required-entry admin__control-select validate-select"
+                    id="custom_discount_type"
+                    name="custom_discount_type"
+                    title="<?= /* @escapeNotVerified */ $block->getTotal()->getTitle().__(' Type') ?>">
+                        <option value="fixed" <?php if($customDiscountType == 'fixed'): ?> selected <?php endif; ?>><?= $currencyCode ?></option>
+                        <option value="percentage" <?php if($customDiscountType == 'percentage'): ?> selected <?php endif; ?>><?= __('%') ?></option>
+                </select>
+                <input type="text" name="custom_discount_amount" value="<?= $customDiscountAmount ?>" title="<?= /* @escapeNotVerified */ $block->getTotal()->getTitle().__(' Amount/Percentage') ?>" id="custom_discount_amount" class="admin__control-text">
+                <button type="submit" title="<?= __('Apply') ?>" id="custom_discount_submit" class="action-default scalable custom-discount-apply custom-discount-action"><span><?= __('Apply') ?></span></button>
+            </div>
+        </div>
+    </td>
+</tr>
+<tr class="row-totals custom-discount-row custom-discount-result">
+    <td style="<?= /* @escapeNotVerified */ $block->getStyle() ?>" class="admin__total-mark" colspan="<?= /* @escapeNotVerified */ $block->getColspan() ?>">
+        <?= /* @escapeNotVerified */ $block->getTotal()->getTitle() ?>
+    </td>
+    <td style="<?= /* @escapeNotVerified */ $block->getStyle() ?>" class="admin__total-amount">
+        <?= /* @escapeNotVerified */ $block->formatPrice($block->getTotal()->getValue()) ?>
+        &nbsp;&nbsp;<a class="custom-discount-action custom-discount-edit-action" title="<?= __('Edit') ?>" id="custom_discount_edit_action" href="#"><span><?= __('Edit') ?></span></a>
+    </td>
+</tr>
+<script type="text/javascript">
+
+require(
+    [
+        'jquery',
+        'Magento_Ui/js/modal/alert'
+    ], function ($, alert) {
+
+    var formElem = $(".form.custom-discount-amount");
+
+    <?php if (!empty($discountData)): ?>
+        $('body').addClass('custom-discount-done');
+        $('body').removeClass('custom-discount-edit');
+    <?php else: ?>
+        $('body').removeClass('custom-discount-done');
+        $('body').addClass('custom-discount-edit');
+    <?php endif; ?>
+
+    $(document).on('click', '#custom_discount_edit_action', function (e) {
+        e.preventDefault();
+        $('body').removeClass('custom-discount-done');
+        $('body').addClass('custom-discount-edit');
+    });
+
+    $("#custom_discount_submit").click(function () {
+        $.ajax({
+            url: '<?= $block->getUrl('custom_order_discount/saveFormData/index') ?>',
+            type: 'POST',
+            dataType: 'json',
+            showLoader: true,
+            data: {
+                type: formElem.find('select[name="custom_discount_type"]').val(),
+                discount_value: formElem.find('input[name="custom_discount_amount"]').val(),
+            },
+            complete: function(response) {             
+                var data = [];
+                order.loadArea(['totals'], true, data);
+                $('body').removeClass('custom-discount-edit');
+                $('body').addClass('custom-discount-done');
+            },
+            error: function (xhr, status, errorThrown) {
+                alert({
+                    title: 'Error.',
+                    content: 'Error happened. Try again.',
+                    actions: {
+                        always: function(){}
+                    }
+                });
+            }
+        });
+        
+        return false;
+    });
+});
+</script>
